@@ -26,9 +26,11 @@ source-repository head
 library
   exposed-modules:
       Import
+      LimitOrderBook.Database
       LimitOrderBook.Types
       LimitOrderBook.Utils
-      Run
+      Server.Api
+      Server.Swagger
       Types
   other-modules:
       Paths_desafio3
@@ -36,10 +38,17 @@ library
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.11 && <10
+      aeson
+    , base >=4.11 && <10
     , rio >=0.1.12.0
+    , servant
+    , servant-server
+    , servant-swagger
+    , servant-swagger-ui
+    , swagger2
     , time
     , vector-algorithms
+    , warp
   default-language: Haskell2010
 
 executable desafio3-exe
@@ -50,12 +59,19 @@ executable desafio3-exe
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.11 && <10
+      aeson
+    , base >=4.11 && <10
     , desafio3
     , optparse-simple
     , rio >=0.1.12.0
+    , servant
+    , servant-server
+    , servant-swagger
+    , servant-swagger-ui
+    , swagger2
     , time
     , vector-algorithms
+    , warp
   default-language: Haskell2010
 
 test-suite desafio3-test
@@ -67,11 +83,18 @@ test-suite desafio3-test
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.11 && <10
+      aeson
+    , base >=4.11 && <10
     , desafio3
     , rio >=0.1.12.0
+    , servant
+    , servant-server
+    , servant-swagger
+    , servant-swagger-ui
+    , swagger2
     , tasty
     , tasty-hunit
     , time
     , vector-algorithms
+    , warp
   default-language: Haskell2010

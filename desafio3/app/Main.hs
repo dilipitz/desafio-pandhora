@@ -3,11 +3,13 @@
 module Main (main) where
 
 import Import
-import Run
 import RIO.Process
 import RIO.Vector (fromList)
+import Network.Wai.Handler.Warp
 import Options.Applicative.Simple
 import qualified Paths_desafio3
+
+import qualified Server.Swagger as S 
 
 main :: IO ()
 main = do
@@ -22,7 +24,7 @@ main = do
                   )
     )
     empty
-  db <- newMVar (fromList [], fromList [])
+  db <- newIORef (fromList [], fromList [])
   lo <- logOptionsHandle stderr (optionsVerbose options)
   pc <- mkDefaultProcessContext
   withLogFunc lo $ \lf ->
@@ -32,4 +34,5 @@ main = do
           , appOptions = options
           , mockDatabase = db
           }
-     in runRIO app run
+    --  in runRIO app run
+    in run 8080 $ S.app app

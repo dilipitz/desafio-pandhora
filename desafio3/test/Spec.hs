@@ -8,9 +8,10 @@ import Prelude (print)
 import RIO.Vector (fromList)
 import LimitOrderBook.Types
 import LimitOrderBook.Utils
+import LimitOrderBook.Database
 
 data MockApp = MockApp
-    { mockDatabase :: MVar LimitOrderDB }
+    { mockDatabase :: IORef LimitOrderDB }
 
 instance HasMockedDatabase MockApp where
     mockDatabaseL = lens mockDatabase (\x y -> x { mockDatabase = y })
@@ -25,17 +26,14 @@ o6 = LimitOrder "0106" (TimeOfDay 12 02 00) "INTC" Sell 50.00 3
 
 main :: IO ()
 main = do
-    db <- newMVar (fromList [], fromList [])
-    let env = MockApp { mockDatabase = db }
-    runReaderT (withDatabase (addLimitOrder o1) ) env
-    res <- readMVar $ view mockDatabaseL env
-    print res
     defaultMain $ testGroup ""
         [ sortBidsTest
         , sortAsksTest
         , withDatabaseTest
         , cancelLimitOrderTest
         , addBulkLimitOrderTest
+        , addMarketOrderTest
+        , addLimitOrderTest
         ]
 
 sortBidsTest :: TestTree 
@@ -53,10 +51,10 @@ sortAsksTest = testGroup "sortAsks"
 withDatabaseTest :: TestTree
 withDatabaseTest =
     testCase "withDatabase" $ do
-        db <- newMVar (fromList [], fromList [])
+        db <- newIORef (fromList [], fromList [])
         let env = MockApp { mockDatabase = db }
         runReaderT (withDatabase (addLimitOrder o1) ) env
-        res <- readMVar $ view mockDatabaseL env
+        res <- readIORef $ view mockDatabaseL env
         res @?= (fromList [o1],fromList [])
 
 cancelLimitOrderTest :: TestTree 
@@ -68,7 +66,7 @@ cancelLimitOrderTest = testCase "cancelLimitOrder" $ do
 addLimitOrderTest :: TestTree
 addLimitOrderTest = testCase "addLimitOrder" $ do
     let initial = (fromList [], fromList [])
-        expected = (fromList [], fromList [o3])
+        expected = (fromList [o1], fromList [])
     addLimitOrder o1 initial @?= expected
 
 addBulkLimitOrderTest :: TestTree

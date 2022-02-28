@@ -33,15 +33,6 @@ addLimitOrder order (buying, selling) = case direction order of
 addBulkLimitOrder ::LimitOrderDB -> [LimitOrder] -> LimitOrderDB
 addBulkLimitOrder = foldl' (flip addLimitOrder)
 
--- | Helper to modify the persistant pseudo-datbase
-withDatabase :: (MonadReader env m, HasMockedDatabase env, MonadIO m) 
-    => (LimitOrderDB -> LimitOrderDB) -> m ()
-withDatabase fn = do
-    env <- ask
-    let mvar = view mockDatabaseL env
-    db <- takeMVar mvar
-    putMVar mvar $ fn db
-
 -- | Helper to subtract LimitOrder's size depending on a given Size
 subtractSizeFromOrders :: Integer -> Vector LimitOrder -> Vector LimitOrder
 subtractSizeFromOrders sz vs = V.fromList $ f' sz (V.toList vs)
@@ -52,6 +43,7 @@ subtractSizeFromOrders sz vs = V.fromList $ f' sz (V.toList vs)
             | s' - s <= 0 = f' (abs (s' - s)) xs
             | otherwise = f' 0 (x{size = s' - s}:xs)
 
+-- | Adds a MarketOrder and deduce the size of corresponding LimitOrders
 addMarketOrder :: Direction -> Integer -> LimitOrderDB -> LimitOrderDB
 addMarketOrder d s (buying, selling) = case d of
     Buy  -> (buying, subtractSizeFromOrders s selling)

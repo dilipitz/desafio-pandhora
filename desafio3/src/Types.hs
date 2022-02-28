@@ -15,7 +15,7 @@ data App = App
   { appLogFunc :: !LogFunc
   , appProcessContext :: !ProcessContext
   , appOptions :: !Options
-  , mockDatabase :: MVar LimitOrderDB
+  , mockDatabase :: !(IORef LimitOrderDB)
   }
 instance HasLogFunc App where
   logFuncL = lens appLogFunc (\x y -> x { appLogFunc = y })
@@ -23,7 +23,7 @@ instance HasProcessContext App where
   processContextL = lens appProcessContext (\x y -> x { appProcessContext = y })
 
 class HasMockedDatabase env where
-  mockDatabaseL :: Lens' env (MVar LimitOrderDB)
+  mockDatabaseL :: Lens' env (IORef LimitOrderDB)
 
 instance HasMockedDatabase App where
   mockDatabaseL = lens mockDatabase (\x y -> x { mockDatabase = y })
