@@ -9,20 +9,34 @@ import LimitOrderBook.Types
 import LimitOrderBook.Database
 
 type LimitOrderAPI = "limitOrder" 
-    :> ( Get '[JSON] (Vector LimitOrder)
-        :<|> ReqBody '[JSON] LimitOrder :> Post '[JSON] LimitOrder 
+    :> (    Summary "List all LimitOrders"  
+                :> Get '[JSON] (Vector LimitOrder)
+        
+        :<|> Summary "Create a new LimitOrder"
+                :> ReqBody '[JSON] LimitOrder 
+                :> Post '[JSON] LimitOrder 
         :<|> "byId" :> Capture "id" Text :> 
-            ( Get '[JSON] (Maybe LimitOrder)
-         :<|> Delete '[JSON] NoContent
+            ( Summary "Gets a LimitOrder By Id"
+                :> Get '[JSON] (Maybe LimitOrder)
+         :<|> Summary "Cancel a Limit Order"
+                :> Delete '[JSON] NoContent
             )
-        :<|> "createBulk" :> ReqBody '[JSON] [LimitOrder ] :> Post '[JSON] [LimitOrder]
-        :<|> "Bids" :> Get '[JSON] (Vector LimitOrder)
-        :<|> "Asks" :> Get '[JSON] (Vector LimitOrder)
-       )
+        :<|> "createBulk" :> Summary "Create LimitOrders from a List"  
+            :> ReqBody '[JSON] [LimitOrder ] 
+            :> Post '[JSON] [LimitOrder]
+        :<|> "Bids" :> Summary "Lists all Bids"  
+                :> Get '[JSON] (Vector LimitOrder)
+        :<|> "Asks" :> Summary "Lists all Asks" 
+                :> Get '[JSON] (Vector LimitOrder)
+      )
+       
 
-type MarketOrderAPI = "marketOrder" :> Capture "size" Integer 
-    :> ( "buy"  :> Get '[JSON] () 
-   :<|>  "sell" :> Get '[JSON] () 
+type MarketOrderAPI = "marketOrder" 
+    :> Capture "size" Integer 
+    :> ( "buy" :> Summary "Creates a buying marketOrder" 
+            :> Get '[JSON] () 
+    :<|> "sell" :> Summary "Creates a selling marketOrder"
+            :> Get '[JSON] () 
        )
 
 
