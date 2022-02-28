@@ -5,6 +5,7 @@ module Main (main) where
 import Import
 import Run
 import RIO.Process
+import RIO.Vector (fromList)
 import Options.Applicative.Simple
 import qualified Paths_desafio3
 
@@ -21,6 +22,7 @@ main = do
                   )
     )
     empty
+  db <- newMVar (fromList [], fromList [])
   lo <- logOptionsHandle stderr (optionsVerbose options)
   pc <- mkDefaultProcessContext
   withLogFunc lo $ \lf ->
@@ -28,5 +30,6 @@ main = do
           { appLogFunc = lf
           , appProcessContext = pc
           , appOptions = options
+          , mockDatabase = db
           }
      in runRIO app run

@@ -13,36 +13,10 @@ import Lib ( sortAscByDate
            , calcAllCumulativeReturns
            , calcCumulativeReturnFromDates
            , calcCumulativeWeeklyReturn
-           , calcAllWeeklyCumulativeReturns
            )
 
 main :: IO ()
 main = do
-    -- xml <- BL.readFile "../prices.xml"
-    -- let prices = parseXML xml
-    --     price = concatMap (findElements $ simpleName "Price") (onlyElems prices)
-    --     date  = map (findElement $ simpleName "Date") price
-    --     value = map (findElement $ simpleName "Value") price
-    --     simpleName s = QName s Nothing Nothing
-    -- print price
-    -- print date
-    -- print value
-    -- csv <- BL.readFile "../prices.csv"
-    -- case parseStockValueCsv csv of
-    --     Left err -> print err
-    --     Right xs  -> do
-    --         -- print xs
-    --         -- print $ V.length xs
-    --         -- print $ (\ i v -> if i - 1 < 0 then Nothing else Just $ (snd v / snd (x V.! (i - 1))) - 1) `V.imap` x
-    --         let getNext i = xs V.!? (i + 1)
-    --         print $ (\ i (currDate, currPrice) -> 
-    --             case getNext i of
-    --                 Nothing -> Nothing
-    --                 Just (nextDate, nextPrice) 
-    --                     | (diffDays currDate nextDate) >= 0 -> Just $ calcCumulativeReturn currPrice nextPrice
-    --                     | otherwise -> Just $ calcCumulativeReturn nextPrice currPrice
-    --             ) `V.imap` xs
-    print $ calcAllWeeklyCumulativeReturns dwv
     defaultMain $ testGroup "" 
         [ sortByDateTest
         , calcCumulativeReturnTest
@@ -50,8 +24,6 @@ main = do
         , calcCumulativeReturnFromDatesTest
         , calcCumulativeWeeklyReturnTest
         ]
-    -- where
-    --     calcCumulativeReturn p1 p2 = p1 / p2 - 1
 
 calcCumulativeReturnTest :: TestTree
 calcCumulativeReturnTest = testGroup "calcCumulativeReturn" 
@@ -125,30 +97,3 @@ calcCumulativeWeeklyReturnTest =
     [ testCase "14/02/2022" $ calcCumulativeWeeklyReturn dwv (fromGregorian 2022 02 14) @?= (fromScientificDecimal 0.4  :: Maybe CumulativeReturn)
     , testCase "10/02/2022" $ calcCumulativeWeeklyReturn dwv (fromGregorian 2022 02 10) @?= Nothing
     ]
-
--- calcAllWeeklyCumulativeReturnsTest :: TestTree 
--- calcAllWeeklyCumulativeReturnsTest =
---     let 
---     testCase "calcAllWeeklyCumulativeReturns" $ calcAllWeeklyCumulativeReturns dwv @?= 
-
-
--- findLastPriceOfPreviousWeekTest :: TestTree 
--- findLastPriceOfPreviousWeekTest = 
---     testCase "findLastPriceOfPreviousWeek" $ findLastPriceOfPreviousWeek dwv (fst dw10) @?= Just (fromScientificDecimal (-0.3214)) 
--- isNextDayTest :: TestTree 
--- isNextDayTest =
---     let day1 = fromGregorian 2022 02 01
---         day2 = fromGregorian 2022 02 02
---         day3 = fromGregorian 2022 01 02
---     in
---     testGroup "isNextDay"
---         [ testGroup "is following dates" 
---             [ testCase "day1 and day2" $ isNextDay day2 day1 @?= True
---             , testCase "day2 and day1" $ isNextDay day1 day2 @?= True
---             ]
---         , testCase "is not following dates" $ isNextDay day3 day1 @?= False
---         ]
-
--- parseDateTest :: TestTree 
--- parseDateTest = testCase "2022/02/26" $ parseDate "2022/02/26" @?= Just (fromGregorian 2022 02 26)
-

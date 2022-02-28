@@ -26,9 +26,10 @@ source-repository head
 library
   exposed-modules:
       Import
+      LimitOrderBook.Types
+      LimitOrderBook.Utils
       Run
       Types
-      Util
   other-modules:
       Paths_desafio3
   hs-source-dirs:
@@ -37,6 +38,8 @@ library
   build-depends:
       base >=4.11 && <10
     , rio >=0.1.12.0
+    , time
+    , vector-algorithms
   default-language: Haskell2010
 
 executable desafio3-exe
@@ -51,13 +54,14 @@ executable desafio3-exe
     , desafio3
     , optparse-simple
     , rio >=0.1.12.0
+    , time
+    , vector-algorithms
   default-language: Haskell2010
 
 test-suite desafio3-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      UtilSpec
       Paths_desafio3
   hs-source-dirs:
       test
@@ -65,6 +69,9 @@ test-suite desafio3-test
   build-depends:
       base >=4.11 && <10
     , desafio3
-    , hspec
     , rio >=0.1.12.0
+    , tasty
+    , tasty-hunit
+    , time
+    , vector-algorithms
   default-language: Haskell2010
